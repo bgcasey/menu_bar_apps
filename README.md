@@ -1,7 +1,7 @@
 # macOS Menu Bar Apps
 
 ![Maintenance](https://img.shields.io/badge/Status-Maintenance-green)
-![Languages](https://img.shields.io/badge/Languages-zsh%20%2B%20JXA-blue)
+![Languages](https://img.shields.io/badge/Languages-zsh%20%7C%20JXA-blue)
 
 A small collection of [SwiftBar](https://github.com/swiftbar/SwiftBar) plugins for the macOS menu bar.
 
@@ -17,6 +17,8 @@ brew install --cask swiftbar
 ---
 
 ## SwiftBar Pomodoro Menu Bar Timer
+
+Script: [pomodoro.1s.zsh](pomodoro.1s.zsh)
 
 A Pomodoro timer that lives in the menu bar. Shows the current phase icon (focus / break / paused) with `MM:SS` countdown, fires a system notification at each phase transition, and exposes start / pause / skip / restart / stop controls plus duration + cycle settings from the dropdown. State persists in `/tmp/pomodoro_swiftbar.state`; settings persist in `~/.config/pomodoro_swiftbar.conf`.
 
@@ -41,6 +43,8 @@ export POM_CYCLES=4      # number of cycles
 ---
 
 ## SwiftBar Now Playing Menu Bar Widget
+
+Script: [now_playing.5s.zsh](now_playing.5s.zsh)
 
 Displays the currently playing track in the menu bar with playback controls (play/pause, next, previous) and a dropdown showing title, artist, album, and a progress bar. Supports Spotify and Apple Music via AppleScript out of the box, and any audio source (browsers, Podcasts, etc.) when `nowplaying-cli` is installed.
 
