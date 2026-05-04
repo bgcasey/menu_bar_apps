@@ -211,42 +211,42 @@ if [[ "${1:-}" == "skip" ]]; then
   read_state
 
   if [[ "$pom_status" == "work" ]]; then
-    # Skip work and go to break, unless this is the final cycle
-    if (( pom_cycle >= pom_total_cycles )); then
-      notify "All cycles complete!"
-      clear_state
-    else
-      start_break
-      notify "Skipped — Break time"
-    fi
+    # Skip work — always go to break (even on the final cycle)
+    start_break
+    notify "Skipped — Break time"
 
   elif [[ "$pom_status" == "break" ]]; then
     # Skip break and optionally bank the unused break time
     remaining=$(current_remaining)
     bank_remaining_break_time "$remaining"
 
-    pom_cycle=$(( pom_cycle + 1 ))
-    start_work
-    notify "Cycle $pom_cycle/$pom_total_cycles — Focus"
+    if (( pom_cycle >= pom_total_cycles )); then
+      notify "All cycles complete!"
+      clear_state
+    else
+      pom_cycle=$(( pom_cycle + 1 ))
+      start_work
+      notify "Cycle $pom_cycle/$pom_total_cycles — Focus"
+    fi
 
   elif [[ "$pom_status" == "paused" ]]; then
     if [[ "$pom_paused_phase" == "break" ]]; then
       # Skip a paused break and optionally bank the paused remaining time
       bank_remaining_break_time "$pom_pause_remaining"
 
-      pom_cycle=$(( pom_cycle + 1 ))
-      start_work
-      notify "Cycle $pom_cycle/$pom_total_cycles — Focus"
-
-    else
-      # Skip paused work and go to break, unless this is the final cycle
       if (( pom_cycle >= pom_total_cycles )); then
         notify "All cycles complete!"
         clear_state
       else
-        start_break
-        notify "Skipped — Break time"
+        pom_cycle=$(( pom_cycle + 1 ))
+        start_work
+        notify "Cycle $pom_cycle/$pom_total_cycles — Focus"
       fi
+
+    else
+      # Skip paused work — always go to break (even on the final cycle)
+      start_break
+      notify "Skipped — Break time"
     fi
   fi
 
@@ -279,19 +279,20 @@ fi
 # --- Phase transition logic ---------------------------------------------------
 advance_phase() {
   if [[ "$pom_status" == "work" ]]; then
+    # Work always transitions to a break — even the final cycle
+    start_break
+    notify "Break time (cycle $pom_cycle/$pom_total_cycles)"
+
+  elif [[ "$pom_status" == "break" ]]; then
     if (( pom_cycle >= pom_total_cycles )); then
       notify "All $pom_total_cycles cycles complete!"
       clear_state
       pom_status="idle"
     else
-      start_break
-      notify "Break time (cycle $pom_cycle/$pom_total_cycles)"
+      pom_cycle=$(( pom_cycle + 1 ))
+      start_work
+      notify "Cycle $pom_cycle/$pom_total_cycles — Focus"
     fi
-
-  elif [[ "$pom_status" == "break" ]]; then
-    pom_cycle=$(( pom_cycle + 1 ))
-    start_work
-    notify "Cycle $pom_cycle/$pom_total_cycles — Focus"
   fi
 }
 
