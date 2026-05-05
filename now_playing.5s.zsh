@@ -12,7 +12,7 @@
 #   3. Optional: brew install nowplaying-cli (for system-wide support)
 
 SELF="$0"
-MAX_TITLE_LEN=0
+MAX_TITLE_LEN=60
 
 # --- Helpers ------------------------------------------------------------------
 truncate_str() {
