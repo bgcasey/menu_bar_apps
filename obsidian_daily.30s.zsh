@@ -78,7 +78,7 @@ def extract(section):
 parts = []
 for s in sections:
     body = extract(s)
-    parts.append(f"## {s}\n{body}\n" if body else f"## {s}\n")
+    parts.append(f"## {s}\n\n{body}\n" if body else f"## {s}\n")
 sys.stdout.write("\n\n\n\n".join(parts))
 PY
 }
@@ -114,8 +114,13 @@ except FileNotFoundError:
     lines = []
 
 def write_section(lines, section, new):
-    new = new.strip("\n")
-    block = (new + "\n\n") if new else "\n"
+    new = new.rstrip("\n")
+    if new:
+        if not new.startswith("\n"):
+            new = "\n" + new
+        block = new + "\n\n"
+    else:
+        block = "\n"
     target = f"## {section}\n"
     try:
         start = lines.index(target)
