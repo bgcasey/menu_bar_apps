@@ -72,7 +72,7 @@ brew install jq
 
 Script: [obsidian_daily.30s.zsh](obsidian_daily.30s.zsh)
 
-Single-click editor for today's Obsidian daily note. Clicking the menu bar icon (`square.and.pencil` SF Symbol) opens a dark-themed dialog pre-filled with one or more `##` sections from today's note (defaults: `Work log`, `Tasks`, `Scratch`). `Cmd+S` saves all sections back in place; `Esc` cancels. Other daily note sections, frontmatter, and surrounding content are left untouched.
+Single-click editor for today's [Obsidian](https://github.com/obsidianmd) daily note. Clicking the menu bar icon (`square.and.pencil` SF Symbol) opens a dark-themed dialog pre-filled with one or more `##` sections from today's note (defaults: `Work log`, `Tasks`, `Scratch`). `Cmd+S` saves all sections back in place; `Esc` cancels. Other daily note sections, frontmatter, and surrounding content are left untouched.
 
 ```sh
 # Symlink the plugin into your SwiftBar plugin directory
