@@ -15,17 +15,19 @@
 #   OBS_VAULT_PATH      — absolute path to your Obsidian vault root
 #   OBS_DAILY_SUBDIR    — daily notes folder relative to vault (default: 0_periodic/daily)
 #   OBS_DATE_FORMAT     — strftime format for note filename (default: %Y-%m-%d)
-#   OBS_SECTION         — markdown H2 section to edit (default: Work log)
+#   OBS_SECTIONS        — comma-separated H2 sections to edit (default: Work log,Tasks,Scratch)
 #   OBS_TEMPLATE_FILE   — optional template file used when creating today's note
 
 # --- Configuration -----------------------------------------------------------
 VAULT_PATH=${OBS_VAULT_PATH:-/Users/brendan/Dropbox/0_obsidian}
 DAILY_SUBDIR=${OBS_DAILY_SUBDIR:-0_periodic/daily}
 DATE_FORMAT=${OBS_DATE_FORMAT:-%Y-%m-%d}
-SECTION=${OBS_SECTION:-Work log}
+SECTIONS=${OBS_SECTIONS:-Work log,Tasks,Scratch}
 TEMPLATE_FILE=${OBS_TEMPLATE_FILE:-}
 
 SELF="$0"
+SELF_DIR="${SELF:A:h}"
+ICON_PATH="$SELF_DIR/obsidian_wireframe.png"
 TODAY=$(date +"$DATE_FORMAT")
 NOTE_DIR="$VAULT_PATH/$DAILY_SUBDIR"
 NOTE_PATH="$NOTE_DIR/$TODAY.md"
@@ -47,61 +49,94 @@ EOF
   fi
 }
 
-extract_section() {
-  NOTE_PATH="$NOTE_PATH" SECTION="$SECTION" /usr/bin/python3 <<'PY'
+extract_sections() {
+  NOTE_PATH="$NOTE_PATH" SECTIONS="$SECTIONS" /usr/bin/python3 <<'PY'
 import os, sys
 path = os.environ["NOTE_PATH"]
-section = os.environ["SECTION"]
-target = f"## {section}\n"
+sections = [s.strip() for s in os.environ["SECTIONS"].split(",") if s.strip()]
+
 try:
     with open(path, "r", encoding="utf-8") as f:
         lines = f.readlines()
 except FileNotFoundError:
-    sys.exit(0)
-try:
-    start = lines.index(target)
-except ValueError:
-    sys.exit(0)
-end = start + 1
-while end < len(lines):
-    stripped = lines[end].rstrip("\n")
-    if stripped.startswith("## ") or stripped.startswith("# ") or stripped in ("---", "***"):
-        break
-    end += 1
-sys.stdout.write("".join(lines[start + 1:end]))
+    lines = []
+
+def extract(section):
+    target = f"## {section}\n"
+    try:
+        start = lines.index(target)
+    except ValueError:
+        return ""
+    end = start + 1
+    while end < len(lines):
+        stripped = lines[end].rstrip("\n")
+        if stripped.startswith("## ") or stripped.startswith("# ") or stripped in ("---", "***"):
+            break
+        end += 1
+    return "".join(lines[start + 1:end]).strip("\n")
+
+parts = []
+for s in sections:
+    body = extract(s)
+    parts.append(f"## {s}\n{body}\n" if body else f"## {s}\n")
+sys.stdout.write("\n\n\n\n".join(parts))
 PY
 }
 
-replace_section() {
+replace_sections() {
   local new_content="$1"
-  NOTE_PATH="$NOTE_PATH" SECTION="$SECTION" NEW_CONTENT="$new_content" /usr/bin/python3 <<'PY'
-import os, sys
+  NOTE_PATH="$NOTE_PATH" SECTIONS="$SECTIONS" NEW_CONTENT="$new_content" /usr/bin/python3 <<'PY'
+import os, sys, re
 path = os.environ["NOTE_PATH"]
-section = os.environ["SECTION"]
-new = os.environ["NEW_CONTENT"]
-if not new.endswith("\n"):
-    new += "\n"
-with open(path, "r", encoding="utf-8") as f:
-    lines = f.readlines()
-target = f"## {section}\n"
+sections = [s.strip() for s in os.environ["SECTIONS"].split(",") if s.strip()]
+edited = os.environ["NEW_CONTENT"]
+
+section_set = set(sections)
+parsed = {}
+current = None
+buffer = []
+for line in edited.split("\n"):
+    m = re.match(r"^## (.+)$", line)
+    if m and m.group(1).strip() in section_set:
+        if current is not None:
+            parsed[current] = "\n".join(buffer)
+        current = m.group(1).strip()
+        buffer = []
+    elif current is not None:
+        buffer.append(line)
+if current is not None:
+    parsed[current] = "\n".join(buffer)
+
 try:
-    start = lines.index(target)
-except ValueError:
-    if lines and not lines[-1].endswith("\n"):
-        lines.append("\n")
-    lines.extend(["\n", target, new])
-    with open(path, "w", encoding="utf-8") as f:
-        f.writelines(lines)
-    sys.exit(0)
-end = start + 1
-while end < len(lines):
-    stripped = lines[end].rstrip("\n")
-    if stripped.startswith("## ") or stripped.startswith("# ") or stripped in ("---", "***"):
-        break
-    end += 1
-new_lines = lines[:start + 1] + [new] + lines[end:]
+    with open(path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+except FileNotFoundError:
+    lines = []
+
+def write_section(lines, section, new):
+    new = new.strip("\n")
+    block = (new + "\n\n") if new else "\n"
+    target = f"## {section}\n"
+    try:
+        start = lines.index(target)
+    except ValueError:
+        if lines and not lines[-1].endswith("\n"):
+            lines.append("\n")
+        return lines + (["\n"] if lines else []) + [target, block]
+    end = start + 1
+    while end < len(lines):
+        stripped = lines[end].rstrip("\n")
+        if stripped.startswith("## ") or stripped.startswith("# ") or stripped in ("---", "***"):
+            break
+        end += 1
+    return lines[:start + 1] + [block] + lines[end:]
+
+for s in sections:
+    if s in parsed:
+        lines = write_section(lines, s, parsed[s])
+
 with open(path, "w", encoding="utf-8") as f:
-    f.writelines(new_lines)
+    f.writelines(lines)
 PY
 }
 
@@ -110,16 +145,16 @@ edit_section() {
 
   local initfile result new_content
   initfile=$(mktemp /tmp/obsidian_edit.XXXXXX)
-  extract_section > "$initfile"
+  extract_sections > "$initfile"
 
-  result=$(SECTION="$SECTION" INITFILE="$initfile" TODAY="$TODAY" /usr/bin/osascript <<'APPLESCRIPT'
+  result=$(INITFILE="$initfile" TODAY="$TODAY" ICON_PATH="$ICON_PATH" /usr/bin/osascript <<'APPLESCRIPT'
 use framework "AppKit"
 use framework "Foundation"
 use scripting additions
 
-set sectionName to system attribute "SECTION"
 set initFile to system attribute "INITFILE"
 set todayStr to system attribute "TODAY"
+set iconPath to system attribute "ICON_PATH"
 
 set initialText to ""
 try
@@ -131,14 +166,19 @@ current application's NSApp's setActivationPolicy:1 -- Accessory (allows key eve
 current application's NSApp's activateIgnoringOtherApps:true
 
 set alert to current application's NSAlert's alloc()'s init()
-alert's setMessageText:("## " & sectionName)
+alert's setMessageText:"Daily Note"
 alert's setInformativeText:todayStr
+set customIcon to (current application's NSImage's alloc()'s initWithContentsOfFile:iconPath)
+if customIcon is not missing value then
+    alert's setIcon:customIcon
+end if
 alert's addButtonWithTitle:"Save"
 alert's addButtonWithTitle:"Cancel"
 
 set alertWindow to alert's |window|()
 alertWindow's setAppearance:(current application's NSAppearance's appearanceNamed:"NSAppearanceNameDarkAqua")
 alertWindow's setTitle:("Obsidian · " & todayStr)
+alertWindow's setCollectionBehavior:257 -- CanJoinAllSpaces(1) | FullScreenAuxiliary(256)
 
 set scrollW to 680
 set scrollH to 440
@@ -214,7 +254,7 @@ APPLESCRIPT
   result=${result//$'\r'/$'\n'}
   if [[ "$result" == __SAVED__* ]]; then
     new_content=${result#__SAVED__}
-    replace_section "$new_content"
+    replace_sections "$new_content"
   fi
 }
 
