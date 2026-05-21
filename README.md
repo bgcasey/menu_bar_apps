@@ -1,7 +1,7 @@
 # macOS Menu Bar Apps
 
 ![Maintenance](https://img.shields.io/badge/Status-Maintenance-green)
-![Languages](https://img.shields.io/badge/Languages-zsh%20%7C%20JXA-blue)
+![Languages](https://img.shields.io/badge/Languages-zsh%20%7C%20JXA%20%7C%20AppleScript-blue)
 
 A small collection of [SwiftBar](https://github.com/swiftbar/SwiftBar) plugins for the macOS menu bar.
 
@@ -64,4 +64,25 @@ brew install jq
 ./now_playing.5s.zsh next        # next track
 ./now_playing.5s.zsh prev        # previous track
 ./now_playing.5s.zsh open        # open the source app
+```
+
+---
+
+## SwiftBar Obsidian Daily Note
+
+Script: [obsidian_daily.30s.zsh](obsidian_daily.30s.zsh)
+
+Single-click editor for today's Obsidian daily note. Clicking the menu bar icon (`square.and.pencil` SF Symbol) opens a dark-themed dialog pre-filled with one or more `##` sections from today's note (defaults: `Work log`, `Tasks`, `Scratch`). `Cmd+S` saves all sections back in place; `Esc` cancels. Other daily note sections, frontmatter, and surrounding content are left untouched.
+
+```sh
+# Symlink the plugin into your SwiftBar plugin directory
+ln -s "$(pwd)/obsidian_daily.30s.zsh" ~/swiftbar_plugins/
+chmod +x obsidian_daily.30s.zsh
+
+# Override defaults with environment variables (optional)
+export OBS_VAULT_PATH=/Users/you/Obsidian/MyVault   # absolute path to vault root
+export OBS_DAILY_SUBDIR=0_periodic/daily            # daily notes folder, relative to vault
+export OBS_DATE_FORMAT=%Y-%m-%d                     # strftime format for filename
+export OBS_SECTIONS="Work log,Tasks,Scratch"        # comma-separated H2 sections to edit
+export OBS_TEMPLATE_FILE=/path/to/template.md       # optional template for new notes
 ```
