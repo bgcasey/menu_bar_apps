@@ -68,6 +68,28 @@ brew install jq
 
 ---
 
+## SwiftBar Obsidian Work Hours
+
+Script: [obsidian_work_hours.30s.zsh](obsidian_work_hours.30s.zsh)
+
+Shows how many hours you've worked today vs how many you planned to work, sourced from your [Obsidian](https://github.com/obsidianmd) daily and weekly notes. Menu bar reads `worked/planned h` (e.g. `3.7/8.0h`) with an `hourglass` SF Symbol. The dropdown lists per-project hours (via the `## Work Codes` table in `5_system/tags.md`) and offers quick links to open today's daily note or this week's weekly note in Obsidian.
+
+Worked hours are summed from `HH:MM-HH:MM` bullets in today's daily note `## Work log` section that include an `#abmi/` tag (excluding `#abmi/sick_day` and `#abmi/vacation_day`), matching the calculation used in the weekly note's `Planned Hours` block. Planned hours are parsed from `rows[N].hours = X.X;` in this week's weekly note, where `N` is today's day-of-week index (0=Sun .. 6=Sat).
+
+```sh
+# Symlink the plugin into your SwiftBar plugin directory
+ln -s "$(pwd)/obsidian_work_hours.30s.zsh" ~/swiftbar_plugins/
+chmod +x obsidian_work_hours.30s.zsh
+
+# Override defaults with environment variables (optional)
+export OBS_VAULT_PATH=/Users/you/Obsidian/MyVault   # absolute path to vault root
+export OBS_DAILY_SUBDIR=0_periodic/daily            # daily notes folder, relative to vault
+export OBS_WEEKLY_SUBDIR=0_periodic/weekly          # weekly notes folder, relative to vault
+export OBS_VAULT_NAME=MyVault                       # vault name used in obsidian:// URLs
+```
+
+---
+
 ## SwiftBar Obsidian Daily Note
 
 Script: [obsidian_daily.30s.zsh](obsidian_daily.30s.zsh)
