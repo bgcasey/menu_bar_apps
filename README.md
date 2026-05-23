@@ -25,6 +25,8 @@ brew install --cask swiftbar
 # Launch SwiftBar, then set a plugin directory when prompted (e.g. ~/swiftbar_plugins)
 ```
 
+[obsidian_daily.30s.zsh](obsidian_daily.30s.zsh) and [obsidian_work_hours.30s.zsh](obsidian_work_hours.30s.zsh) pull and push data to my [Obsidian](https://github.com/obsidianmd) vault. 
+
 ---
 
 ## SwiftBar Now Playing Menu Bar Widget
