@@ -5,6 +5,8 @@
 
 A small collection of [SwiftBar](https://github.com/swiftbar/SwiftBar) plugins for the macOS menu bar.
 
+![Menu bar with the plugins running](menu_bar.png)
+
 ## Prerequisites
 
 ```sh
