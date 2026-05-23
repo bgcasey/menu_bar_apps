@@ -7,6 +7,15 @@ A small collection of [SwiftBar](https://github.com/swiftbar/SwiftBar) plugins f
 
 ![Menu bar with the plugins running](menu_bar.png)
 
+## Contents
+
+- [Prerequisites](#prerequisites)
+- [SwiftBar Now Playing Menu Bar Widget](#swiftbar-now-playing-menu-bar-widget)
+- [SwiftBar Pomodoro Menu Bar Timer](#swiftbar-pomodoro-menu-bar-timer)
+- [SwiftBar Obsidian Daily Note](#swiftbar-obsidian-daily-note)
+- [SwiftBar Obsidian Work Hours](#swiftbar-obsidian-work-hours)
+
+
 ## Prerequisites
 
 ```sh
@@ -14,32 +23,6 @@ A small collection of [SwiftBar](https://github.com/swiftbar/SwiftBar) plugins f
 brew install --cask swiftbar
 
 # Launch SwiftBar, then set a plugin directory when prompted (e.g. ~/swiftbar_plugins)
-```
-
----
-
-## SwiftBar Pomodoro Menu Bar Timer
-
-Script: [pomodoro.1s.zsh](pomodoro.1s.zsh)
-
-A Pomodoro timer that lives in the menu bar. Shows the current phase icon (focus / break / paused) with `MM:SS` countdown, fires a system notification at each phase transition, and exposes start / pause / skip / restart / stop controls plus duration + cycle settings from the dropdown. State persists in `/tmp/pomodoro_swiftbar.state`; settings persist in `~/.config/pomodoro_swiftbar.conf`.
-
-```sh
-# Symlink the plugin into your SwiftBar plugin directory
-ln -s "$(pwd)/pomodoro.1s.zsh" ~/swiftbar_plugins/
-chmod +x pomodoro.1s.zsh
-
-# Override defaults with environment variables (optional)
-export POM_WORK_MIN=25   # focus duration in minutes
-export POM_BREAK_MIN=5   # break duration in minutes
-export POM_CYCLES=4      # number of cycles
-
-# CLI control (also available from the menu bar dropdown)
-./pomodoro.1s.zsh start         # start a pomodoro session
-./pomodoro.1s.zsh pause_resume  # toggle pause/resume
-./pomodoro.1s.zsh skip          # skip to next phase
-./pomodoro.1s.zsh reset         # restart from cycle 1
-./pomodoro.1s.zsh stop          # stop and reset
 ```
 
 ---
@@ -70,24 +53,28 @@ brew install jq
 
 ---
 
-## SwiftBar Obsidian Work Hours
+## SwiftBar Pomodoro Menu Bar Timer
 
-Script: [obsidian_work_hours.30s.zsh](obsidian_work_hours.30s.zsh)
+Script: [pomodoro.1s.zsh](pomodoro.1s.zsh)
 
-Shows how many hours you've worked today vs how many you planned to work, sourced from your [Obsidian](https://github.com/obsidianmd) daily and weekly notes. Menu bar reads `worked/planned h` (e.g. `3.7/8.0h`) with an `hourglass` SF Symbol. The dropdown lists per-project hours (via the `## Work Codes` table in `5_system/tags.md`) and offers quick links to open today's daily note or this week's weekly note in Obsidian.
-
-Worked hours are summed from `HH:MM-HH:MM` bullets in today's daily note `## Work log` section that include an `#abmi/` tag (excluding `#abmi/sick_day` and `#abmi/vacation_day`), matching the calculation used in the weekly note's `Planned Hours` block. Planned hours are parsed from `rows[N].hours = X.X;` in this week's weekly note, where `N` is today's day-of-week index (0=Sun .. 6=Sat).
+A Pomodoro timer that lives in the menu bar. Shows the current phase icon (focus / break / paused) with `MM:SS` countdown, fires a system notification at each phase transition, and exposes start / pause / skip / restart / stop controls plus duration + cycle settings from the dropdown. State persists in `/tmp/pomodoro_swiftbar.state`; settings persist in `~/.config/pomodoro_swiftbar.conf`.
 
 ```sh
 # Symlink the plugin into your SwiftBar plugin directory
-ln -s "$(pwd)/obsidian_work_hours.30s.zsh" ~/swiftbar_plugins/
-chmod +x obsidian_work_hours.30s.zsh
+ln -s "$(pwd)/pomodoro.1s.zsh" ~/swiftbar_plugins/
+chmod +x pomodoro.1s.zsh
 
 # Override defaults with environment variables (optional)
-export OBS_VAULT_PATH=/Users/you/Obsidian/MyVault   # absolute path to vault root
-export OBS_DAILY_SUBDIR=0_periodic/daily            # daily notes folder, relative to vault
-export OBS_WEEKLY_SUBDIR=0_periodic/weekly          # weekly notes folder, relative to vault
-export OBS_VAULT_NAME=MyVault                       # vault name used in obsidian:// URLs
+export POM_WORK_MIN=25   # focus duration in minutes
+export POM_BREAK_MIN=5   # break duration in minutes
+export POM_CYCLES=4      # number of cycles
+
+# CLI control (also available from the menu bar dropdown)
+./pomodoro.1s.zsh start         # start a pomodoro session
+./pomodoro.1s.zsh pause_resume  # toggle pause/resume
+./pomodoro.1s.zsh skip          # skip to next phase
+./pomodoro.1s.zsh reset         # restart from cycle 1
+./pomodoro.1s.zsh stop          # stop and reset
 ```
 
 ---
@@ -109,4 +96,26 @@ export OBS_DAILY_SUBDIR=0_periodic/daily            # daily notes folder, relati
 export OBS_DATE_FORMAT=%Y-%m-%d                     # strftime format for filename
 export OBS_SECTIONS="Work log,Tasks,Scratch"        # comma-separated H2 sections to edit
 export OBS_TEMPLATE_FILE=/path/to/template.md       # optional template for new notes
+```
+
+---
+
+## SwiftBar Obsidian Work Hours
+
+Script: [obsidian_work_hours.30s.zsh](obsidian_work_hours.30s.zsh)
+
+Shows how many hours you've worked today vs how many you planned to work, sourced from your [Obsidian](https://github.com/obsidianmd) daily and weekly notes. Menu bar reads `worked/planned h` (e.g. `3.7/8.0h`) with an `hourglass` SF Symbol. The dropdown lists per-project hours (via the `## Work Codes` table in `5_system/tags.md`) and offers quick links to open today's daily note or this week's weekly note in Obsidian.
+
+Worked hours are summed from `HH:MM-HH:MM` bullets in today's daily note `## Work log` section that include an `#abmi/` tag (excluding `#abmi/sick_day` and `#abmi/vacation_day`), matching the calculation used in the weekly note's `Planned Hours` block. Planned hours are parsed from `rows[N].hours = X.X;` in this week's weekly note, where `N` is today's day-of-week index (0=Sun .. 6=Sat).
+
+```sh
+# Symlink the plugin into your SwiftBar plugin directory
+ln -s "$(pwd)/obsidian_work_hours.30s.zsh" ~/swiftbar_plugins/
+chmod +x obsidian_work_hours.30s.zsh
+
+# Override defaults with environment variables (optional)
+export OBS_VAULT_PATH=/Users/you/Obsidian/MyVault   # absolute path to vault root
+export OBS_DAILY_SUBDIR=0_periodic/daily            # daily notes folder, relative to vault
+export OBS_WEEKLY_SUBDIR=0_periodic/weekly          # weekly notes folder, relative to vault
+export OBS_VAULT_NAME=MyVault                       # vault name used in obsidian:// URLs
 ```
