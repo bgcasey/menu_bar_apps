@@ -210,7 +210,7 @@ case "${1:-}" in
 esac
 
 # --- Menu bar output --------------------------------------------------------
-echo " ${WORKED_H}/${PLANNED_H}h | sfimage=calendar.day.timeline.left"
+echo "${WORKED_H}/${PLANNED_H}h | sfimage=calendar.day.timeline.left"
 echo "---"
 print -r -- "$DROPDOWN"
 echo "---"
