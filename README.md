@@ -35,6 +35,8 @@ Script: [now_playing.5s.zsh](now_playing.5s.zsh)
 
 Displays the currently playing track in the menu bar with playback controls (play/pause, next, previous) and a dropdown showing title, artist, album, and a progress bar. Supports Spotify and Apple Music via AppleScript out of the box, and any audio source (browsers, Podcasts, etc.) when `nowplaying-cli` is installed.
 
+![Now Playing dropdown](now_playing.png)
+
 ```sh
 # Symlink the plugin into your SwiftBar plugin directory
 ln -s "$(pwd)/now_playing.5s.zsh" ~/swiftbar_plugins/
@@ -60,6 +62,8 @@ brew install jq
 Script: [pomodoro.1s.zsh](pomodoro.1s.zsh)
 
 A Pomodoro timer that lives in the menu bar. Shows the current phase icon (focus / break / paused) with `MM:SS` countdown, fires a system notification at each phase transition, and exposes start / pause / skip / restart / stop controls plus duration + cycle settings from the dropdown. State persists in `/tmp/pomodoro_swiftbar.state`; settings persist in `~/.config/pomodoro_swiftbar.conf`.
+
+![Pomodoro dropdown](pomodoro.png)
 
 ```sh
 # Symlink the plugin into your SwiftBar plugin directory
@@ -87,6 +91,8 @@ Script: [obsidian_daily.30s.zsh](obsidian_daily.30s.zsh)
 
 Single-click editor for today's [Obsidian](https://github.com/obsidianmd) daily note. Clicking the menu bar icon (`square.and.pencil` SF Symbol) opens a dark-themed dialog pre-filled with one or more `##` sections from today's note (defaults: `Work log`, `Tasks`, `Scratch`). `Cmd+S` saves all sections back in place; `Esc` cancels. Other daily note sections, frontmatter, and surrounding content are left untouched.
 
+![Obsidian daily note editor](obsidian_daily.png)
+
 ```sh
 # Symlink the plugin into your SwiftBar plugin directory
 ln -s "$(pwd)/obsidian_daily.30s.zsh" ~/swiftbar_plugins/
@@ -109,6 +115,8 @@ Script: [obsidian_work_hours.30s.zsh](obsidian_work_hours.30s.zsh)
 Shows how many hours you've worked today vs how many you planned to work, sourced from your [Obsidian](https://github.com/obsidianmd) daily and weekly notes. Menu bar reads `worked/planned h` (e.g. `3.7/8.0h`) with an `hourglass` SF Symbol. The dropdown lists per-project hours (via the `## Work Codes` table in `5_system/tags.md`) and offers quick links to open today's daily note or this week's weekly note in Obsidian.
 
 Worked hours are summed from `HH:MM-HH:MM` bullets in today's daily note `## Work log` section that include an `#abmi/` tag (excluding `#abmi/sick_day` and `#abmi/vacation_day`), matching the calculation used in the weekly note's `Planned Hours` block. Planned hours are parsed from `rows[N].hours = X.X;` in this week's weekly note, where `N` is today's day-of-week index (0=Sun .. 6=Sat).
+
+![Work hours dropdown](work_log.png)
 
 ```sh
 # Symlink the plugin into your SwiftBar plugin directory
