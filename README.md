@@ -91,7 +91,7 @@ Script: [obsidian_daily.30s.zsh](obsidian_daily.30s.zsh)
 
 Single-click editor for today's [Obsidian](https://github.com/obsidianmd) daily note. Clicking the menu bar icon (`square.and.pencil` SF Symbol) opens a dark-themed dialog pre-filled with one or more `##` sections from today's note (defaults: `Work log`, `Tasks`, `Scratch`). `Cmd+S` saves all sections back in place; `Esc` cancels. Other daily note sections, frontmatter, and surrounding content are left untouched.
 
-![Obsidian daily note editor](obsidian_daily.png)
+![Work hours dropdown](work_log.png)
 
 ```sh
 # Symlink the plugin into your SwiftBar plugin directory
@@ -116,7 +116,7 @@ Shows how many hours you've worked today vs how many you planned to work, source
 
 Worked hours are summed from `HH:MM-HH:MM` bullets in today's daily note `## Work log` section that include an `#abmi/` tag (excluding `#abmi/sick_day` and `#abmi/vacation_day`), matching the calculation used in the weekly note's `Planned Hours` block. Planned hours are parsed from `rows[N].hours = X.X;` in this week's weekly note, where `N` is today's day-of-week index (0=Sun .. 6=Sat).
 
-![Work hours dropdown](work_log.png)
+![Obsidian daily note editor](obsidian_daily.png)
 
 ```sh
 # Symlink the plugin into your SwiftBar plugin directory
