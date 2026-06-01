@@ -5,7 +5,7 @@
 
 A small collection of [SwiftBar](https://github.com/swiftbar/SwiftBar) plugins for the macOS menu bar.
 
-![Menu bar with the plugins running](menu_bar.png)
+![Menu bar with the plugins running](images/menu_bar.png)
 
 ## Contents
 
@@ -36,7 +36,7 @@ Script: [now_playing.5s.zsh](now_playing.5s.zsh)
 
 Displays the currently playing track in the menu bar with playback controls (play/pause, next, previous) and a dropdown showing title, artist, album, and a progress bar. Supports Spotify and Apple Music via AppleScript out of the box, and any audio source (browsers, Podcasts, etc.) when `nowplaying-cli` is installed.
 
-![Now Playing dropdown](now_playing.png)
+![Now Playing dropdown](images/now_playing.png)
 
 ```sh
 # Symlink the plugin into your SwiftBar plugin directory
@@ -66,7 +66,7 @@ A Pomodoro timer that lives in the menu bar. Shows the current phase icon (focus
 
 **Standing-desk mode** adds a nested layer for regulating standing-desk use. When enabled, each cycle (round) is tagged standing or sitting, running in repeating blocks — by default 2 standing rounds then 2 sitting rounds — and you get a notification to change posture at each switch.  Configurable from the dropdown: toggle the mode, choose whether to **start with standing or sitting**, and set the number of stand / sit rounds per block.
 
-![Pomodoro dropdown](pomodoro.png)
+![Pomodoro dropdown](images/pomodoro.png)
 
 ```sh
 # Symlink the plugin into your SwiftBar plugin directory
@@ -98,7 +98,7 @@ Script: [obsidian_daily.30s.zsh](obsidian_daily.30s.zsh)
 
 Single-click editor for today's [Obsidian](https://github.com/obsidianmd) daily note. Clicking the menu bar icon (`square.and.pencil` SF Symbol) opens a dark-themed dialog pre-filled with one or more `##` sections from today's note (defaults: `Work log`, `Tasks`, `Scratch`). `Cmd+S` saves all sections back in place; `Esc` cancels. Other daily note sections, frontmatter, and surrounding content are left untouched.
 
-![Work hours dropdown](work_log.png)
+![Work hours dropdown](images/work_log.png)
 
 ```sh
 # Symlink the plugin into your SwiftBar plugin directory
@@ -123,7 +123,7 @@ Shows how many hours you've worked today vs how many you planned to work, source
 
 Worked hours are summed from `HH:MM-HH:MM` bullets in today's daily note `## Work log` section that include an `#abmi/` tag (excluding `#abmi/sick_day` and `#abmi/vacation_day`), matching the calculation used in the weekly note's `Planned Hours` block. Planned hours are parsed from `rows[N].hours = X.X;` in this week's weekly note, where `N` is today's day-of-week index (0=Sun .. 6=Sat).
 
-![Obsidian daily note editor](obsidian_daily.png)
+![Obsidian daily note editor](images/obsidian_daily.png)
 
 ```sh
 # Symlink the plugin into your SwiftBar plugin directory
