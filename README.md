@@ -14,6 +14,7 @@ A small collection of [SwiftBar](https://github.com/swiftbar/SwiftBar) plugins f
 - [SwiftBar Pomodoro Menu Bar Timer](#swiftbar-pomodoro-menu-bar-timer)
 - [SwiftBar Obsidian Daily Note](#swiftbar-obsidian-daily-note)
 - [SwiftBar Obsidian Work Hours](#swiftbar-obsidian-work-hours)
+- [SwiftBar Remote PC Stats](#swiftbar-remote-pc-stats)
 
 
 ## Prerequisites
@@ -134,4 +135,47 @@ export OBS_VAULT_PATH=/Users/you/Obsidian/MyVault   # absolute path to vault roo
 export OBS_DAILY_SUBDIR=0_periodic/daily            # daily notes folder, relative to vault
 export OBS_WEEKLY_SUBDIR=0_periodic/weekly          # weekly notes folder, relative to vault
 export OBS_VAULT_NAME=MyVault                       # vault name used in obsidian:// URLs
+```
+
+---
+
+## SwiftBar Remote PC Stats
+
+Scripts: [remote_stats.30s.zsh](remote_stats.30s.zsh) (mac) + [remote_stats/write_stats.ps1](remote_stats/write_stats.ps1) (Windows PC)
+
+Shows a remote **Windows** PC's CPU and memory in the menu bar (`server.rack 23% / 47%`). The PC pushes its stats *out* through Dropbox: a per-minute scheduled task writes a stats file into this repo's Dropbox-synced `remote_stats/` folder, and the mac widget reads it from the same folder.
+
+The reading turns orange/red as usage gets high. The dropdown adds used/total GB and the last update time. If updates stop (PC off/asleep, or Dropbox not syncing) it shows `stale` with the last known values; before any data syncs, `no data`. 
+
+**Windows PC setup (one time, no admin needed):** make sure Dropbox is installed and signed in to the same account as the mac (so this repo's `remote_stats/` folder syncs onto the PC), then register a per-user scheduled task to run the synced script every minute. Point `-File` at wherever your Dropbox keeps this repo.
+
+Open **Command Prompt** and paste the below script as one line. It runs the script through `run_hidden.vbs` (a tiny wrapper in the same folder) via `wscript`, so no console window flashes each minute:
+
+```bat
+schtasks /create /tn "Dropbox PC Stats" /sc minute /mo 1 /f /ru "DOMAIN\user" /it /tr "wscript \"%USERPROFILE%\Dropbox\3_resources\menu_bar_apps\remote_stats\run_hidden.vbs\""
+```
+
+Replace `DOMAIN\user` with your own account (e.g. `%USERNAME%` for the current user). You should see `SUCCESS: The scheduled task "Dropbox PC Stats" has successfully created.`
+
+To remove it later:
+
+```bat
+schtasks /delete /tn "Dropbox PC Stats" /f
+```
+
+It writes `<COMPUTERNAME>.dat` next to itself in `remote_stats/` (line format: `cpuPct;memPct;usedGB;totalGB;epoch;hostname`; ignored by git). Full setup notes, including how to test and remove the task, are in the header of [remote_stats/write_stats.ps1](remote_stats/write_stats.ps1).
+
+```sh
+# Symlink the plugin into your SwiftBar plugin directory
+ln -s "$(pwd)/remote_stats.30s.zsh" ~/swiftbar_plugins/
+chmod +x remote_stats.30s.zsh
+
+# Override defaults with environment variables (or ~/.config/remote_stats_swiftbar.conf)
+# By default reads the newest *.dat from the repo's remote_stats/ folder.
+export STATS_DIR=~/Dropbox/3_resources/menu_bar_apps/remote_stats  # folder holding the .dat files
+export STATS_FILE=.../remote_stats/ABMI1026.dat  # optional; default: newest *.dat in STATS_DIR
+export REMOTE_LABEL=ABMI                   # optional short label in the menu bar
+export STALE_SECS=180                      # flag data as stale after N seconds
+export WARN_PCT=75                         # colour reading orange at/above this %
+export CRIT_PCT=90                         # colour reading red at/above this %
 ```
