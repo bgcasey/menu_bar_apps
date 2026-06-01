@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# Local Claude Code settings
+.claude/settings.local.json
+
+# Generated stats files written by write_stats.ps1 on the remote PC
+remote_stats/*.dat
+remote_stats/*.dat.tmp
