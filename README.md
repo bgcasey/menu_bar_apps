@@ -63,6 +63,8 @@ Script: [pomodoro.1s.zsh](pomodoro.1s.zsh)
 
 A Pomodoro timer that lives in the menu bar. Shows the current phase icon (focus / break / paused) with `MM:SS` countdown, fires a system notification at each phase transition, and exposes start / pause / skip / restart / stop controls plus duration + cycle settings from the dropdown. State persists in `/tmp/pomodoro_swiftbar.state`; settings persist in `~/.config/pomodoro_swiftbar.conf`.
 
+**Standing-desk mode** adds a nested layer for regulating standing-desk use. When enabled, each cycle (round) is tagged standing or sitting, running in repeating blocks — by default 2 standing rounds then 2 sitting rounds — and you get a notification to change posture at each switch.  Configurable from the dropdown: toggle the mode, choose whether to **start with standing or sitting**, and set the number of stand / sit rounds per block.
+
 ![Pomodoro dropdown](pomodoro.png)
 
 ```sh
@@ -71,9 +73,13 @@ ln -s "$(pwd)/pomodoro.1s.zsh" ~/swiftbar_plugins/
 chmod +x pomodoro.1s.zsh
 
 # Override defaults with environment variables (optional)
-export POM_WORK_MIN=25   # focus duration in minutes
-export POM_BREAK_MIN=5   # break duration in minutes
-export POM_CYCLES=4      # number of cycles
+export POM_WORK_MIN=25        # focus duration in minutes
+export POM_BREAK_MIN=5        # break duration in minutes
+export POM_CYCLES=4           # number of cycles
+export POM_DESK_MODE=1        # enable standing-desk alternation (0/1)
+export POM_STAND_ROUNDS=2     # consecutive standing rounds per block
+export POM_SIT_ROUNDS=2       # consecutive sitting rounds per block
+export POM_START_POSTURE=stand # first round posture (stand or sit)
 
 # CLI control (also available from the menu bar dropdown)
 ./pomodoro.1s.zsh start         # start a pomodoro session
