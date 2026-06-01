@@ -140,6 +140,7 @@ export OBS_VAULT_NAME=MyVault                       # vault name used in obsidia
 ---
 
 ## SwiftBar Remote PC Stats
+![Remote_Stats_dropdown](images/remote_stats.png)
 
 Scripts: [remote_stats.30s.zsh](remote_stats.30s.zsh) (mac) + [remote_stats/write_stats.ps1](remote_stats/write_stats.ps1) (Windows PC)
 
