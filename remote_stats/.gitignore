@@ -1,0 +1,3 @@
+# Generated stats files written by write_stats.ps1 on the remote PC
+*.dat
+*.dat.tmp
