@@ -26,7 +26,7 @@
 #   OBS_VAULT_NAME       — vault name used in obsidian:// URLs (defaults to dir basename)
 
 # --- Configuration -----------------------------------------------------------
-VAULT_PATH=${OBS_VAULT_PATH:-/Users/brendan/Dropbox/0_obsidian}
+VAULT_PATH=${OBS_VAULT_PATH:-${HOME}/Library/CloudStorage/Dropbox/0_obsidian}
 DAILY_SUBDIR=${OBS_DAILY_SUBDIR:-0_periodic/daily}
 WEEKLY_SUBDIR=${OBS_WEEKLY_SUBDIR:-0_periodic/weekly}
 VAULT_NAME=${OBS_VAULT_NAME:-${VAULT_PATH:t}}
