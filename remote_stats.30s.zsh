@@ -119,15 +119,15 @@ age=$(( now - epoch ))
 
 # --- Stale data ---------------------------------------------------------------
 if (( epoch == 0 || age > STALE_SECS )); then
-  echo ":exclamationmark.triangle.fill: $label stale | color=orange sfsize=13"
+  echo "${prefix}IDLE | sfimage=server.rack sfconfig=eyJyZW5kZXJpbmdNb2RlIjoiTW9ub2Nocm9tZSJ9 font=Menlo sfsize=13 color=gray"
   echo "---"
   echo "$host | size=13 sfimage=desktopcomputer"
-  echo "Last reading: $(format_age "$age") | size=12 color=gray"
-  echo "Updates have stopped — the PC may be off, asleep, | size=11 color=gray"
-  echo "or Dropbox isn't syncing. Last known values below. | size=11 color=gray"
-  echo "---"
-  echo "CPU: ${cpu}% | size=13 sfimage=cpu color=gray"
-  echo "Memory: ${mempct}%  (${used_gb} / ${total_gb} GB) | size=13 sfimage=memorychip color=gray"
+  if (( epoch > 0 )); then
+    echo "Last seen: $(format_age "$age") | size=12 color=gray"
+  else
+    echo "No data received yet | size=12 color=gray"
+  fi
+  echo "PC may be off, asleep, or Dropbox isn't syncing. | size=11 color=gray"
   echo "---"
   echo "Reveal folder in Finder | bash=\"$SELF\" param1=reveal terminal=false sfimage=folder"
   echo "Refresh | bash=\"$SELF\" terminal=false refresh=true sfimage=arrow.clockwise"
