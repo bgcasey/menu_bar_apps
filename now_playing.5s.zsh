@@ -12,7 +12,16 @@
 #   3. Optional: brew install nowplaying-cli (for system-wide support)
 
 SELF="$0"
-MAX_TITLE_LEN=60
+
+# Dynamic title length: scales with screen width, assuming ~70% is taken by other icons/menus.
+# Override with MAX_TITLE_LEN env var if you need more or less.
+SCREEN_W=$(python3 -c \
+  "import Quartz; print(int(Quartz.CGDisplayBounds(Quartz.CGMainDisplayID()).size.width))" \
+  2>/dev/null)
+SCREEN_W=${SCREEN_W:-1440}
+MAX_TITLE_LEN=${MAX_TITLE_LEN:-$(( SCREEN_W / 50 ))}
+(( MAX_TITLE_LEN < 10 )) && MAX_TITLE_LEN=10
+(( MAX_TITLE_LEN > 35 )) && MAX_TITLE_LEN=35
 
 # --- Helpers ------------------------------------------------------------------
 truncate_str() {
