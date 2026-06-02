@@ -26,14 +26,33 @@
 #   OBS_VAULT_NAME       — vault name used in obsidian:// URLs (defaults to dir basename)
 
 # --- Configuration -----------------------------------------------------------
-VAULT_PATH=${OBS_VAULT_PATH:-${HOME}/Library/CloudStorage/Dropbox/0_obsidian}
+SELF="$0"
+SELF_DIR="${SELF:A:h}"
+
+# Resolve the Obsidian vault by walking up from this script (which lives inside
+# Dropbox) to the folder containing 0_obsidian. This follows whichever Dropbox
+# the machine uses (~/Dropbox or ~/Library/CloudStorage/Dropbox) instead of
+# hardcoding one. $OBS_VAULT_PATH overrides; known locations are a fallback.
+_resolve_vault() {
+  [[ -n "$OBS_VAULT_PATH" ]] && { print -r -- "$OBS_VAULT_PATH"; return; }
+  local d="$SELF_DIR"
+  while [[ "$d" != "/" ]]; do
+    [[ -d "$d/0_obsidian" ]] && { print -r -- "$d/0_obsidian"; return; }
+    d="${d:h}"
+  done
+  local c
+  for c in "$HOME/Dropbox/0_obsidian" "$HOME/Library/CloudStorage/Dropbox/0_obsidian"; do
+    [[ -d "$c" ]] && { print -r -- "$c"; return; }
+  done
+  print -r -- "$HOME/Dropbox/0_obsidian"
+}
+VAULT_PATH=$(_resolve_vault)
+
 DAILY_SUBDIR=${OBS_DAILY_SUBDIR:-0_periodic/daily}
 WEEKLY_SUBDIR=${OBS_WEEKLY_SUBDIR:-0_periodic/weekly}
 VAULT_NAME=${OBS_VAULT_NAME:-${VAULT_PATH:t}}
 
-SELF="$0"
-SELF_DIR="${SELF:A:h}"
-ICON_PATH="$SELF_DIR/obsidian_wireframe.png"
+ICON_PATH="$SELF_DIR/images/obsidian_wireframe.png"
 
 TODAY=$(date +%Y-%m-%d)
 DOW=$(date +%w)  # 0=Sun .. 6=Sat
