@@ -19,7 +19,8 @@
 #   OBS_TEMPLATE_FILE   — optional template file used when creating today's note
 
 # --- Configuration -----------------------------------------------------------
-VAULT_PATH=${OBS_VAULT_PATH:-/Users/brendan/Dropbox/0_obsidian}
+VAULT_PATH=${OBS_VAULT_PATH:-${HOME}/Library/CloudStorage/Dropbox/0_obsidian}
+LOCK_FILE="/tmp/obsidian_daily_editor.pid"
 DAILY_SUBDIR=${OBS_DAILY_SUBDIR:-0_periodic/daily}
 DATE_FORMAT=${OBS_DATE_FORMAT:-%Y-%m-%d}
 SECTIONS=${OBS_SECTIONS:-Work log,Tasks,Scratch}
@@ -27,7 +28,7 @@ TEMPLATE_FILE=${OBS_TEMPLATE_FILE:-}
 
 SELF="$0"
 SELF_DIR="${SELF:A:h}"
-ICON_PATH="$SELF_DIR/obsidian_wireframe.png"
+ICON_PATH="$SELF_DIR/images/obsidian_wireframe.png"
 TODAY=$(date +"$DATE_FORMAT")
 NOTE_DIR="$VAULT_PATH/$DAILY_SUBDIR"
 NOTE_PATH="$NOTE_DIR/$TODAY.md"
@@ -148,11 +149,13 @@ PY
 edit_section() {
   [[ ! -f "$NOTE_PATH" ]] && create_today
 
-  local initfile result new_content
+  local initfile result_file result new_content osapid
   initfile=$(mktemp /tmp/obsidian_edit.XXXXXX)
+  result_file=$(mktemp /tmp/obsidian_result.XXXXXX)
   extract_sections > "$initfile"
 
-  result=$(INITFILE="$initfile" TODAY="$TODAY" ICON_PATH="$ICON_PATH" /usr/bin/osascript <<'APPLESCRIPT'
+  INITFILE="$initfile" TODAY="$TODAY" ICON_PATH="$ICON_PATH" \
+  /usr/bin/osascript >"$result_file" <<'APPLESCRIPT' &
 use framework "AppKit"
 use framework "Foundation"
 use scripting additions
@@ -252,9 +255,13 @@ else
     return "__CANCELLED__"
 end if
 APPLESCRIPT
-)
+  osapid=$!
+  echo "$osapid" >"$LOCK_FILE"
+  wait "$osapid"
 
-  rm -f "$initfile"
+  rm -f "$LOCK_FILE" "$initfile"
+  result=$(<"$result_file")
+  rm -f "$result_file"
 
   result=${result//$'\r'/$'\n'}
   if [[ "$result" == __SAVED__* ]]; then
@@ -265,7 +272,19 @@ APPLESCRIPT
 
 # --- CLI dispatch -----------------------------------------------------------
 case "${1:-}" in
-  edit)   edit_section; exit 0 ;;
+  edit)
+    if [[ -f "$LOCK_FILE" ]]; then
+      osapid=$(<"$LOCK_FILE")
+      if [[ -n "$osapid" ]] && kill -0 "$osapid" 2>/dev/null; then
+        kill "$osapid"
+        rm -f "$LOCK_FILE"
+        exit 0
+      fi
+      rm -f "$LOCK_FILE"
+    fi
+    edit_section
+    exit 0
+    ;;
   create) create_today; exit 0 ;;
 esac
 
