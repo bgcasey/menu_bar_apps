@@ -455,6 +455,33 @@ if [[ "$pom_status" == "idle" || -z "${pom_status:-}" ]]; then
 
   echo "-----"
 
+  desk_check=""
+  [[ "$DESK_MODE" == "1" ]] && desk_check=" :checkmark:"
+  echo "--Standing desk mode${desk_check} | bash=\"$SELF\" param1=toggle_desk_mode terminal=false refresh=true"
+
+  if [[ "$START_POSTURE" == "sit" ]]; then
+    start_posture_label="Start with: Sitting"
+  else
+    start_posture_label="Start with: Standing"
+  fi
+  echo "--${start_posture_label} | bash=\"$SELF\" param1=toggle_start_posture terminal=false refresh=true"
+
+  for r in 1 2 3 4; do
+    check=""
+    [[ "$r" == "$STAND_ROUNDS" ]] && check=" :checkmark:"
+    echo "--Stand rounds: ${r}${check} | bash=\"$SELF\" param1=set_stand_rounds param2=$r terminal=false refresh=true"
+  done
+
+  echo "-----"
+
+  for r in 1 2 3 4; do
+    check=""
+    [[ "$r" == "$SIT_ROUNDS" ]] && check=" :checkmark:"
+    echo "--Sit rounds: ${r}${check} | bash=\"$SELF\" param1=set_sit_rounds param2=$r terminal=false refresh=true"
+  done
+
+  echo "-----"
+
   bank_check=""
   [[ "$BANK_BREAK_TIME" == "1" ]] && bank_check=" :checkmark:"
   echo "--Bank skipped break time${bank_check} | bash=\"$SELF\" param1=toggle_bank_break_time terminal=false refresh=true"
