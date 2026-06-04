@@ -170,6 +170,7 @@ week_worked = sum(m for _, _, m in per_day)
 weekly_md = read(weekly)
 planned_today = None
 planned_week_total = 0.0
+planned_rest = 0.0  # planned hours for days after today
 planned_known = False
 if weekly_md:
     for i in range(7):
@@ -180,6 +181,8 @@ if weekly_md:
             planned_week_total += v
             if i == dow_today:
                 planned_today = v
+            if i > dow_today:
+                planned_rest += v
 
 def hfmt(mins):
     return f"{mins/60:.1f}"
@@ -200,7 +203,11 @@ for ds, name, mins in per_day:
     cum += mins
     marker = " ←" if ds == today_str else ""
     print(f"  {name} {ds[-5:]}  {hfmt(mins)}h   (cum {hfmt(cum)}h){marker}")
-print(f"Total: {week_w}h / {week_p}h")
+print(f"Total (current): {week_w}h / {week_p}h")
+if planned_known:
+    # Anticipated end-of-week total: worked so far + planned for remaining days
+    anticipated = week_worked / 60.0 + planned_rest
+    print(f"Total (anticipated): {anticipated:.1f}h / {week_p}h | color=gray")
 if today_projects:
     print("---")
     print("Today by project | size=11 color=gray")
