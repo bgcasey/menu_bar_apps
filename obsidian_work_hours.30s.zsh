@@ -172,12 +172,14 @@ planned_today = None
 planned_week_total = 0.0
 planned_rest = 0.0  # planned hours for days after today
 planned_known = False
+planned_by_day = {}  # day index (0..6) -> planned hours
 if weekly_md:
     for i in range(7):
         m = re.search(rf"rows\[\s*{i}\s*\]\.hours\s*=\s*([0-9]*\.?[0-9]+)", weekly_md)
         if m:
             planned_known = True
             v = float(m.group(1))
+            planned_by_day[i] = v
             planned_week_total += v
             if i == dow_today:
                 planned_today = v
@@ -197,17 +199,23 @@ print("---DROPDOWN---")
 print(f"Today · {today_str} | size=11 color=gray")
 print(f"Worked: {today_w}h    Planned: {today_p}h")
 print("---")
-print("This week | size=11 color=gray")
+print("This week (worked/planned) | size=11 color=gray")
 cum = 0
-for ds, name, mins in per_day:
+for i, (ds, name, mins) in enumerate(per_day):
     cum += mins
     marker = " ←" if ds == today_str else ""
-    print(f"  {name} {ds[-5:]}  {hfmt(mins)}h   (cum {hfmt(cum)}h){marker}")
+    planned_day = planned_by_day.get(i)
+    planned_text = f"{planned_day:.1f}" if planned_day is not None else "?"
+    row = f"  {name}  {hfmt(mins)}h/{planned_text}h   (cum {hfmt(cum)}h){marker}"
+    if ds == today_str:
+        row += " | color=black"
+    print(row)
+print("---")
 print(f"Total (current): {week_w}h / {week_p}h")
 if planned_known:
     # Anticipated end-of-week total: worked so far + planned for remaining days
     anticipated = week_worked / 60.0 + planned_rest
-    print(f"Total (anticipated): {anticipated:.1f}h / {week_p}h | color=gray")
+    print(f"Total (anticipated): {anticipated:.1f}h / {week_p}h | color=black")
 if today_projects:
     print("---")
     print("Today by project | size=11 color=gray")
